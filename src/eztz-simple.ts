@@ -8,7 +8,7 @@ import { eztz } from 'eztz.js'
 import { timeout } from 'promise-timeout'
 
 function die (message: string): void {
-  console.error(colors.magenta(message))
+  console.error(colors.cyan(message))
   process.exit(1)
 }
 
@@ -24,8 +24,8 @@ program
   .version('0.0.1', '-v, --version')
   .description('Tezos CLI using eztz')
   .on('command:*', () => {
-    console.error('Invalid action provided: %s.\nSee --help for available actions.',
-      program.args.join(' '))
+    console.error(colors.cyan('Invalid action provided: %s.'), program.args.join(' '))
+    console.error('See --help for available actions.')
     process.exit(1)
   })
 
@@ -33,10 +33,10 @@ program
   .command('transfer')
   .description('move funds between accounts')
   .option('-n, --node <URI>', 'Tezos node URI')
-  .option('-f, --fromSK <key>', 'Sender secret key')
-  .option('-t, --toPKH <hash>', 'Receiver public key hash')
-  .option('-a, --amount <value>', 'Amount to transfer in mutez')
-  .option('-p, --fee <value>', 'Desired operation fee in mutez')
+  .option('-f, --fromSK <key>', 'sender secret key')
+  .option('-t, --toPKH <hash>', 'receiver public key hash')
+  .option('-a, --amount <value>', 'amount to transfer in mutez')
+  .option('-p, --fee <value>', 'desired operation fee in mutez')
   .action(async (options: TransferCommand) => {
     if (!options.node) die('No Tezos node provided.')
     if (!options.fromSK) die('No sender SK provided.')
@@ -66,6 +66,7 @@ program
 
 // Cannot be chained....
 if (program.args.length < 1) {
-  console.error('No action provided.\nSee --help for available action.', program.args.join(' '))
+  console.error(colors.cyan('No action provided.'))
+  console.error('See --help for available actions.')
   process.exit(1)
 }
