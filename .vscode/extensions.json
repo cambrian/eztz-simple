@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "amatiasq.sort-imports",
+    "eg2.tslint",
+    "steoates.autoimport"
+  ]
+}

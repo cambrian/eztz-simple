@@ -1,0 +1,40 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "inlineSourceMap": true,
+    "jsx": "react",
+    "lib": [
+      "es2018"
+    ],
+    "listFiles": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "paths": {
+      "@src": [
+        "src/index"
+      ],
+      "@src/*": [
+        "src/*"
+      ],
+    },
+    "pretty": true,
+    "rootDir": ".",
+    "strict": true,
+    "target": "es2018",
+    "traceResolution": false
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ]
+}
