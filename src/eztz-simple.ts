@@ -21,6 +21,10 @@ interface TransferCommand {
   timeout: number
 }
 
+interface TransferResult {
+
+}
+
 program
   .version('0.0.1', '-v, --version')
   .description('Tezos CLI using eztz')
@@ -55,9 +59,12 @@ program
       const tezAmount = eztz.utility.totez(options.amount)
       const tezFee = eztz.utility.totez(options.fee)
       // Usually a bad request will fail instantly, but we timeout all requests as a precaution.
-      await timeout(eztz.rpc.transfer(keys.pkh, keys, options.toPKH, tezAmount, tezFee, null),
-        options.timeout * 1000)
-      console.log(colors.green('Transfer successfully injected.'))
+      const result = await timeout(
+        eztz.rpc.transfer(keys.pkh, keys, options.toPKH, tezAmount, tezFee, null),
+        options.timeout * 1000
+      )
+      console.log(colors.green('Transfer injected with the following hash:'))
+      console.log(result.hash)
     } catch (error) {
       console.error(colors.red('An error occurred. Error info below:'))
       // Catch can really catch any type, although typically Error/String.
