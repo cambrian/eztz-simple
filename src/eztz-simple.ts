@@ -1,4 +1,4 @@
-// Disallowed by Nexe: #!/usr/bin/env node
+#!/usr/bin/env node
 require('source-map-support').install()
 
 import * as colors from 'colors'
@@ -62,7 +62,7 @@ program
       console.error(colors.red('An error occurred. Error info below:'))
       // Catch can really catch any type, although typically Error/String.
       if (error instanceof Error && error.message) console.error(error.message)
-      else if (!(error instanceof Error)) console.error(error)
+      else if (!(error instanceof Error) && error !== '') console.error(error)
       else console.error('Unknown error (check the URI and connection).')
       process.exit(1)
     }
