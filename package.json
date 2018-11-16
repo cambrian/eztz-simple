@@ -5,7 +5,7 @@
   "main": "dist/src/eztz-simple.js",
   "private": true,
   "scripts": {
-    "build": "rm -rf dist lib && ./node_modules/.bin/tsc && chmod +x ./dist/**/*.js && mkdir lib && ./node_modules/.bin/pkg dist/src/eztz-simple.js --options no-deprecation --out-path ./lib",
+    "build": "rm -rf dist lib && ./node_modules/.bin/tsc && chmod +x ./dist/**/*.js && mkdir lib && ./node_modules/.bin/pkg dist/src/eztz-simple.js -t host --options no-deprecation --out-path ./lib",
     "clean": "rm -rf dist",
     "lint": "./node_modules/.bin/tslint --project tsconfig.json --format stylish",
     "start": "./dist/src/eztz-simple.js",
