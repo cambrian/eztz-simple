@@ -56,7 +56,7 @@ program
       // Catch can really catch any type, although typically Error/String.
       if (error instanceof Error && error.message) console.error(error.message)
       else if (!(error instanceof Error)) console.error(error)
-      else console.error('Unknown error (check your connection).')
+      else console.error('Unknown error (check your URI/connection).')
       process.exit(1)
     }
   })
