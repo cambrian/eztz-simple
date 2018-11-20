@@ -21,8 +21,18 @@ interface TransferCommand {
   timeout: number
 }
 
-interface TransferResult {
+interface GetPublicCommand {
+  node: string
+  secret: eztz.SecretKey,
+}
 
+function handleError (error: any): void {
+  console.error(colors.red('An error occurred. Error info below:'))
+  // Catch can really catch any type, although typically Error/String.
+  if (error instanceof Error && error.message) console.error(error.message)
+  else if (!(error instanceof Error) && error !== '') console.error(error)
+  else console.error('Unknown error (check the URI and connection).')
+  process.exit(1)
 }
 
 program
@@ -66,12 +76,26 @@ program
       console.log(colors.green('Transfer injected with the following hash:'))
       console.log(result.hash)
     } catch (error) {
-      console.error(colors.red('An error occurred. Error info below:'))
-      // Catch can really catch any type, although typically Error/String.
-      if (error instanceof Error && error.message) console.error(error.message)
-      else if (!(error instanceof Error) && error !== '') console.error(error)
-      else console.error('Unknown error (check the URI and connection).')
-      process.exit(1)
+      handleError(error)
+    }
+  })
+
+program
+  .command('extract')
+  .description('get public key hash for a secret')
+  .option('-n, --node <URI>', 'Tezos node URI')
+  .option('-s, --secret <key>', 'Secret key')
+  .action(async (options: GetPublicCommand) => {
+    if (!options.node) die('No Tezos node provided.')
+    if (!options.secret) die('No secret key provided.')
+    try {
+      eztz.node.setProvider(options.node)
+      const keys = eztz.crypto.extractKeys(options.secret)
+      if (!keys.pkh) throw new Error('Extraction failed on a bad secret key.')
+      console.log(colors.green('Extracted the following public key hash:'))
+      console.log(keys.pkh)
+    } catch (error) {
+      handleError(error)
     }
   })
 
