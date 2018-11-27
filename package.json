@@ -43,7 +43,7 @@
   "dependencies": {
     "colors": "^1.3.2",
     "commander": "^2.19.0",
-    "eztz.js": "git://github.com/1protocol/eztz.git#eztz-modern",
+    "eztz.js": "git://github.com/1protocol/eztz.git",
     "module-alias": "^2.1.0",
     "promise-timeout": "^1.3.0",
     "source-map-support": "^0.5.8",
