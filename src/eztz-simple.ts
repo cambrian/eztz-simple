@@ -12,7 +12,7 @@ function die (message: string): void {
   process.exit(1)
 }
 
-interface TransferCommand {
+interface ForgeTransferCommand {
   node: string
   fromSK: eztz.SecretKey,
   toPKH: eztz.PublicKeyHash,
@@ -21,7 +21,7 @@ interface TransferCommand {
   timeout: number
 }
 
-interface GetPublicCommand {
+interface ExtractCommand {
   node: string
   secret: eztz.SecretKey,
 }
@@ -45,15 +45,15 @@ program
   })
 
 program
-  .command('transfer')
-  .description('move funds between accounts')
+  .command('forgeTransfer')
+  .description('forge a transfer between accounts')
   .option('-n, --node <URI>', 'Tezos node URI')
   .option('-f, --fromSK <key>', 'Sender secret key')
   .option('-t, --toPKH <hash>', 'Receiver public key hash')
   .option('-a, --amount <value>', 'Amount to transfer in mutez')
   .option('-p, --fee <value>', 'Desired operation fee in mutez')
   .option('-m, --timeout [sec]', 'Timeout in seconds for request', parseInt)
-  .action(async (options: TransferCommand) => {
+  .action(async (options: ForgeTransferCommand) => {
     if (!options.node) die('No Tezos node provided.')
     if (!options.fromSK) die('No sender SK provided.')
     if (!options.toPKH) die('No receiver PKH provided.')
@@ -66,15 +66,19 @@ program
     try {
       eztz.node.setProvider(options.node)
       const keys = eztz.crypto.extractKeys(options.fromSK)
+      const secretKey = keys.sk as eztz.SecretKey
+      keys.sk = false // Short-circuits the injection after forge.
       const tezAmount = eztz.utility.totez(options.amount)
       const tezFee = eztz.utility.totez(options.fee)
       // Usually a bad request will fail instantly, but we timeout all requests as a precaution.
-      const result = await timeout(
+      const forgeResult = await timeout(
         eztz.rpc.transfer(keys.pkh, keys, options.toPKH, tezAmount, tezFee, null),
         options.timeout * 1000
-      )
-      console.log(colors.green('Transfer injected with the following hash:'))
-      console.log(result.hash)
+      ) as eztz.rpc.ForgedTransferResult
+      let signResult = eztz.crypto.sign(forgeResult.opbytes, secretKey, eztz.watermark.generic)
+      // TODO: Pre-validate forged operation (will require some modification to EZTZ).
+      console.log(colors.green('Transfer forged with the following signed contents:'))
+      console.log(signResult.sbytes)
     } catch (error) {
       handleError(error)
     }
@@ -82,10 +86,10 @@ program
 
 program
   .command('extract')
-  .description('get public key hash for a secret')
+  .description('get the public key hash for a secret')
   .option('-n, --node <URI>', 'Tezos node URI')
   .option('-s, --secret <key>', 'Secret key')
-  .action(async (options: GetPublicCommand) => {
+  .action(async (options: ExtractCommand) => {
     if (!options.node) die('No Tezos node provided.')
     if (!options.secret) die('No secret key provided.')
     try {
